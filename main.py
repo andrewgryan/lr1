@@ -14,17 +14,16 @@ def parse(message: str):
     conditions = []
     stack = ""
     for lookahead in message + "=":
-        print(stack)
-        if match := re.search("(M?)[0-9]{2}$", stack):
-            value = int(stack[-2:])
+        if match := re.search("(M?)([0-9]{2})$", stack):
+            value = int(match.group(2))
             if match.group(1) == "M":
                 value = -value
             if lookahead == "/":
                 conditions.append(Temperature(value=value))
-                stack = stack[:-3]
+                stack = stack[:match.start()]
             elif conditions and isinstance(conditions[-1], Temperature):
                 conditions.append(DewPoint(value=value))
-                stack = stack[:-3]
+                stack = stack[:match.start()]
 
         stack += lookahead
     return conditions
